@@ -12,7 +12,7 @@
             bottom
             :nudge-bottom="50"
             origin="center center"
-            transition="scale-transition"
+            transition="slide-y-reverse-transition"
             :close-on-content-click="false"
             elevation="1px"
             rounded="50px"
@@ -219,7 +219,7 @@
                       <div class="flex items-center w-[130px]">
                         <v-checkbox
                           primary
-                          @change="getItem($event, item.id)"
+                          @change="getItem($event, item.id, item.paymentStatus)"
                         ></v-checkbox>
                         <v-icon>$arrowIcon</v-icon>
                       </div>
@@ -338,6 +338,7 @@ export default {
       moreContent: false,
       search: "",
       selectedItem: "",
+      selectedStatus: "",
       page: 1,
       pageCount: 3,
       itemsPerPage: 5,
@@ -418,7 +419,7 @@ export default {
             lastLogin: newDate(user.lastLogin),
             userStatus: user.userStatus,
             paymentStatus: user.paymentStatus,
-            centsAmount: user.amountInCents,
+            centsAmount: user.amountInCents / 100,
             paidOn: newDate(user.paidOn),
             activities: activities,
           });
@@ -426,13 +427,14 @@ export default {
       });
       this.update++;
     },
-    getItem(event, id) {
+    getItem(event, id, status) {
       if (event === true) {
         this.selectedItem = id;
+        this.selectedStatus = status;
       }
     },
     async markPaid() {
-      if (this.selectedItem != "") {
+      if (this.selectedItem != "" && this.selectedStatus == "unpaid") {
         await this.$axios
           .$patch(`/mark-paid/${this.selectedItem}`)
           .then((response) => {

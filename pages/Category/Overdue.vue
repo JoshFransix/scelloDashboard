@@ -12,7 +12,7 @@
             bottom
             :nudge-bottom="50"
             origin="center center"
-            transition="scale-transition"
+            transition="slide-y-reverse-transition"
             :close-on-content-click="false"
             elevation="1px"
             rounded="50px"
@@ -418,7 +418,7 @@ export default {
             lastLogin: newDate(user.lastLogin),
             userStatus: user.userStatus,
             paymentStatus: user.paymentStatus,
-            centsAmount: user.amountInCents,
+            centsAmount: user.amountInCents / 100,
             paidOn: newDate(user.paidOn),
             activities: activities,
           });

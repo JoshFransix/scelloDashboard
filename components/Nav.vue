@@ -35,10 +35,10 @@
         bottom-0
         left-0
         bg-[#C6C2DE]
+        opacity-40
         rounded-sm
         h-[1px]
         w-full
-        -z-10
       "
     ></div>
   </div>
@@ -63,7 +63,7 @@ export default {
     }
     users.map((user) => {
       if (user.paymentStatus != "paid") {
-        totalAmount.push(user.amountInCents);
+        totalAmount.push(user.amountInCents / 100);
       }
     });
     this.amount = sum(totalAmount).toFixed(2);
