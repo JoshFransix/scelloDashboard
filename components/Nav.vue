@@ -24,7 +24,7 @@
       <div class="justify-self-end text-[#6E6893]">
         <h1>
           Total Payable amount:
-          <strong class="text-[#6D5BD0] mx-1">${{ amount.toFixed(2) }}</strong
+          <strong class="text-[#6D5BD0] mx-1">${{ amount }}</strong
           >USD
         </h1>
       </div>
@@ -48,8 +48,25 @@
 export default {
   data() {
     return {
-      amount: 900,
+      amount: "",
     };
+  },
+  mounted() {
+    const users = this.$store.state.data.users;
+    let totalAmount = [];
+    function sum(input) {
+      let total = 0;
+      for (var idx = 0; idx <= input.length - 1; idx++) {
+        total += input[idx];
+      }
+      return total;
+    }
+    users.map((user) => {
+      if (user.paymentStatus != "paid") {
+        totalAmount.push(user.amountInCents);
+      }
+    });
+    this.amount = sum(totalAmount).toFixed(2);
   },
 };
 </script>

@@ -1,68 +1,90 @@
 <template>
   <div :key="update">
-    <div class="relative">
-      <div>
-        <h1
-          class="
-            text-[#6E6893] text-sm
-            uppercase
-            font-medium
-            mb-3
-            tracking-widest
-          "
-        >
-          Table Heading
-        </h1>
-      </div>
-      <div class="flex justify-between w-full items-center">
-        <div class="flex z-10">
-          <NuxtLink to="/Category/All">All</NuxtLink>
-          <NuxtLink to="/Category/Paid">Paid</NuxtLink>
-          <NuxtLink to="/Category/Unpaid">Unpaid</NuxtLink>
-          <NuxtLink to="/Category/Overdue">Overdue</NuxtLink>
-        </div>
-
-        <div class="justify-self-end text-[#6E6893]">
-          <h1>
-            Total Payable amount:
-            <strong class="text-[#6D5BD0] mx-1">${{ amount.toFixed(2) }}</strong
-            >USD
-          </h1>
-        </div>
-      </div>
-      <div
-        class="
-          absolute
-          bottom-0
-          left-0
-          bg-[#C6C2DE]
-          rounded-sm
-          h-[1px]
-          w-full
-          -z-10
-        "
-      ></div>
+    <div>
+      <Nav />
     </div>
 
     <div class="main-bg">
       <div class="relative px-4">
         <div class="flex justify-between items-center w-max">
-          <div
-            class="
-              flex
-              items-center
-              w-max
-              px-2.5
-              py-1.5
-              border border-slate-200
-              rounded-md
-              cursor-pointer
-              mr-6
-            "
+          <v-menu
+            v-model="filterMenu"
+            bottom
+            :nudge-bottom="50"
+            origin="center center"
+            transition="scale-transition"
+            :close-on-content-click="false"
+            elevation="1px"
+            rounded="50px"
           >
-            <v-icon size="20px">$filterIcon</v-icon>
-            <span class="ml-2">Filter</span>
-          </div>
+            <template v-slot:activator="{ on, attrs }">
+              <div
+                v-bind="attrs"
+                v-on="on"
+                class="
+                  flex
+                  items-center
+                  w-max
+                  px-2.5
+                  py-1.5
+                  border border-slate-200
+                  rounded-md
+                  cursor-pointer
+                  mr-6
+                "
+              >
+                <v-icon size="20px">$filterIcon</v-icon>
+                <span class="ml-2">Filter</span>
+              </div>
+            </template>
+            <div class="relative px-3 py-4 bg-white font-bold w-[220px]">
+              <!-- <div
+                @click="filterMenu = false"
+                class="
+                  absolute
+                  top-2
+                  right-2
+                  border border-black
+                  rounded-full
+                  p-0
+                  cursor-pointer
+                  h-max
+                "
+              >
+                <v-icon small color="#000" class="p-0">mdi-close</v-icon>
+              </div> -->
+              <div>
+                <h1 class="text-[#6E6893] text-xs mb-3">SORT BY:</h1>
+                <label
+                  :for="filterOptions[index]"
+                  v-for="(item, index) in filterOptions"
+                  :key="index"
+                  class="
+                    text-[#25213B] text-sm
+                    flex
+                    font-light
+                    items-center
+                    justify-between
+                    px-2
+                    hover:bg-[#F2F0F9]
+                    rounded-md
+                    py-0
+                    cursor-pointer
+                  "
+                >
+                  <span>{{ filterOptions[index] }}</span>
+                  <v-radio-group v-model="filterRadios" @change="sortUsers">
+                    <v-radio
+                      class="py-0"
+                      :id="filterOptions[index]"
+                      color="primary"
+                      :value="filterOptions[index]"
+                    ></v-radio>
+                  </v-radio-group>
+                </label>
+              </div>
+            </div>
+          </v-menu>
           <div
             class="
               bg-[#F4F2FF]
@@ -73,6 +95,10 @@
               flex
               items-center
               text-[#8B83BA]
+              border border-transparent
+              transition
+              hover:border hover:border-[#6D5BD0] hover:text-[#6D5BD0]
+              focus:border-[#6D5BD0] focus:text-[#6D5BD0]
             "
           >
             <i class="fas fa-search"></i>
@@ -305,16 +331,17 @@
 export default {
   data() {
     return {
-      amount: 900,
+      filterMenu: false,
       update: 0,
       generalCheckbox: false,
+      filterRadios: null,
       moreContent: false,
       search: "",
       selectedItem: "",
       page: 1,
       pageCount: 3,
       itemsPerPage: 5,
-      keys: ["NAME", "USER STATUS", "PAYMENT STATUS", "AMOUNT"],
+      filterOptions: ["First Name", "Last Name", "Email"],
       items: [],
     };
   },
@@ -322,36 +349,34 @@ export default {
     await this.getUsers();
   },
   methods: {
+    sortUsers() {
+      console.log(this.filterRadios);
+      this.filterMenu = false;
+      this.items = this.items.sort((a, b) => {
+        if (this.filterRadios == "First Name" && a.firstName < b.firstName) {
+          return -1;
+        } else if (
+          this.filterRadios == "Last Name" &&
+          a.lastName < b.lastName
+        ) {
+          return -1;
+        } else if (this.filterRadios == "Email" && a.email < b.email) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+    },
     async getUsers() {
+      this.items = [];
       await this.$store.dispatch("data/getUsers");
       const users = this.$store.state.data.users;
-      let totalAmount = [];
-      function sum(input) {
-        let total = 0;
-        for (var idx = 0; idx <= input.length - 1; idx++) {
-          total += input[idx];
-        }
-        return total;
-      }
       users.map((user) => {
-        if (user.paymentStatus != "paid") {
-          totalAmount.push(user.amountInCents);
-        }
         let activityDate;
         let activityDone;
         let activityDetail;
         let activities = [];
         let name;
-
-        // function newDate(value) {
-        //   let date = new Date(value);
-        //   let newDate = date.toLocaleString("default", {
-        //     month: "short",
-        //     year: "numeric",
-        //     day: "numeric",
-        //   });
-        //   return newDate;
-        // }
 
         function newDate(value) {
           const months = [
@@ -386,6 +411,8 @@ export default {
         this.items.push({
           id: user.id,
           name: name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
           lastLogin: newDate(user.lastLogin),
           userStatus: user.userStatus,
@@ -395,7 +422,7 @@ export default {
           activities: activities,
         });
       });
-      this.amount = sum(totalAmount);
+      this.update++;
     },
     getItem(event, id) {
       if (event === true) {
@@ -403,16 +430,19 @@ export default {
       }
     },
     async markPaid() {
-      await this.$axios
-        .$patch(`/mark-paid/${this.selectedItem}`)
-        .then((response) => {
-          this.getUsers();
-          this.update++;
-          console.log(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (this.selectedItem != "") {
+        await this.$axios
+          .$patch(`/mark-paid/${this.selectedItem}`)
+          .then((response) => {
+            this.getUsers();
+            console.log(response);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        return;
+      }
     },
   },
   computed: {

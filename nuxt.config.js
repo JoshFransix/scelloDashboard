@@ -92,7 +92,7 @@ export default {
     },
   },
   loading: {
-    color: '#00237b',
-    height: '5px'
+    color: '#6e6893',
+    height: '3px'
   }
 }

@@ -23,6 +23,11 @@ a {
   margin-right: 3rem;
 }
 
+div,
+span {
+  transition: all 0.2s ease-in-out;
+}
+
 a:not([aria-current="page"]),
 a:not(.nuxt-link-exact-active),
 a:not(.nuxt-link-active) {
