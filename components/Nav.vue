@@ -15,7 +15,7 @@
     </div>
     <div class="flex justify-between w-full items-center">
       <div class="flex z-10">
-        <NuxtLink to="/Category/All">All</NuxtLink>
+        <NuxtLink to="/">All</NuxtLink>
         <NuxtLink to="/Category/Paid">Paid</NuxtLink>
         <NuxtLink to="/Category/Unpaid">Unpaid</NuxtLink>
         <NuxtLink to="/Category/Overdue">Overdue</NuxtLink>
@@ -87,8 +87,7 @@ a:not(.nuxt-link-active) {
 }
 
 a[aria-current="page"],
-a.nuxt-link-exact-active,
-a.nuxt-link-active {
+a.nuxt-link-exact-active {
   position: relative;
   font-weight: bolder !important;
   transition: 0.3s ease-in-out;

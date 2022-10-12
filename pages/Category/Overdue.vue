@@ -1,5 +1,5 @@
 <template>
-  <div :key="update">
+  <div>
     <div>
       <Nav />
     </div>
@@ -319,7 +319,7 @@ export default {
   data() {
     return {
       filterMenu: false,
-      update: 0,
+
       generalCheckbox: false,
       filterRadios: null,
       moreContent: false,
@@ -411,7 +411,6 @@ export default {
           });
         }
       });
-      this.update++;
     },
     getItem(event, id) {
       if (event === true) {
