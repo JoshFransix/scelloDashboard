@@ -5,6 +5,7 @@
     </div>
 
     <div class="main-bg">
+      <!-- Filter and Search -->
       <div class="relative px-4">
         <div class="flex justify-between items-center w-max">
           <v-menu
@@ -38,21 +39,6 @@
               </div>
             </template>
             <div class="relative px-3 py-4 bg-white font-bold w-[220px]">
-              <!-- <div
-                @click="filterMenu = false"
-                class="
-                  absolute
-                  top-2
-                  right-2
-                  border border-black
-                  rounded-full
-                  p-0
-                  cursor-pointer
-                  h-max
-                "
-              >
-                <v-icon small color="#000" class="p-0">mdi-close</v-icon>
-              </div> -->
               <div>
                 <h1 class="text-[#6E6893] text-xs mb-3">SORT BY:</h1>
                 <label
@@ -117,6 +103,8 @@
           >
         </div>
       </div>
+
+      <!-- Table with contents -->
       <div>
         <v-data-iterator
           :items="items"
@@ -331,7 +319,6 @@ export default {
   data() {
     return {
       filterMenu: false,
-      amount: 900,
       update: 0,
       generalCheckbox: false,
       filterRadios: null,
